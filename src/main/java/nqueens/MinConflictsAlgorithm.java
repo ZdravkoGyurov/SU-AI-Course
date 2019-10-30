@@ -31,7 +31,6 @@ public class MinConflictsAlgorithm {
                     break;
                 }
             }
-            System.out.println("restarting..");
         }
 
         printBoard(queens);
