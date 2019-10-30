@@ -22,18 +22,26 @@ public class MinConflictsAlgorithm {
         while(!foundAnswer) {
             queens = randomInit(size);
             final int maxIterations = size * 3;
-            final int[] queensInRow = getQueensInRow(queens);
-            final int[] queensInDiagonal1 = getQueensInDiagonal1(queens);
-            final int[] queensInDiagonal2 = getQueensInDiagonal2(queens);
+            int[] queensInRow = getQueensInRow(queens);
+            int[] queensInDiagonal1 = getQueensInDiagonal1(queens);
+            int[] queensInDiagonal2 = getQueensInDiagonal2(queens);
             int row, column;
 
             for(int i = 0; i < maxIterations; i++) {
-                row = getRowWithMaxConflicts(queens);
-                column = getColumnWithMaxConflicts(queens);
+                row = getRowWithMaxConflicts(queens, queensInRow, queensInDiagonal1, queensInDiagonal2);
+                column = getColumnWithMaxConflicts(queens, queensInRow, queensInDiagonal1, queensInDiagonal2);
 
+                // TODO update queensInRow, queensInDiagonal1, queensInDiagonal2
+                final int oldRow = queens[column];
+                final int oldCol = column;
+                final int newRow = row;
+                final int newCol = column;
                 queens[column] = row;
+                queensInRow = updateQueensInRow(queensInRow, oldRow, newRow);
+                queensInDiagonal1 = updateQueensInDiagonal1(queensInDiagonal1, queens.length, oldRow, oldCol, newRow, newCol);
+                queensInDiagonal2 = updateQueensInDiagonal2(queensInDiagonal2, oldRow, oldCol, newRow, newCol);
 
-                if(!hasConflicts(queens)) {
+                if(!hasConflicts(queens, queensInRow, queensInDiagonal1, queensInDiagonal2)) {
                     foundAnswer = true;
                     break;
                 }
@@ -41,6 +49,28 @@ public class MinConflictsAlgorithm {
         }
 
         printBoard(queens);
+    }
+
+    private static int[] updateQueensInDiagonal2(final int[] queensInDiagonal2, final int oldRow, final int oldCol, final int newRow, final int newCol) {
+        queensInDiagonal2[oldRow + oldCol]--;
+        queensInDiagonal2[newRow + newCol]++;
+
+        return queensInDiagonal2;
+    }
+
+
+    private static int[] updateQueensInDiagonal1(final int[] queensInDiagonal1, final int size, final int oldRow, final int oldCol, final int newRow, final int newCol) {
+        queensInDiagonal1[oldCol - oldRow + size - 1]--;
+        queensInDiagonal1[newCol - newRow + size - 1]++;
+
+        return queensInDiagonal1;
+    }
+
+    private static int[] updateQueensInRow(final int[] queensInRow, final int oldRow, final int newRow) {
+        queensInRow[oldRow]--;
+        queensInRow[newRow]++;
+
+        return queensInRow;
     }
 
     private static int[] getQueensInDiagonal2(final int[] queens) {
@@ -94,27 +124,18 @@ public class MinConflictsAlgorithm {
         }
     }
 
-    private static int getConflicts(final int[] queens, final int row, final int col) {
-        int conflicts = 0;
-
-        for(int i = 0; i < queens.length; i++) {
-            if(i == col) {
-                continue;
-            }
-            if(queens[i] == row || Math.abs(queens[i] - row) == Math.abs(i - col)) {
-                conflicts++;
-            }
-        }
-
-        return conflicts;
+    private static int getConflicts(final int row, final int col, final int[] queensInRow,
+                                    final int[] queensInDiagonal1, final int[] queensInDiagonal2) {
+        return queensInRow[row] + queensInDiagonal1[row - col + queensInRow.length - 1] + queensInDiagonal2[row + col] - 3;
     }
 
-    private static int getColumnWithMaxConflicts(final int[] queens) {
+    private static int getColumnWithMaxConflicts(final int[] queens, final int[] queensInRow,
+                                                 final int[] queensInDiagonal1, final int[] queensInDiagonal2) {
         int maxConflicts = 0;
         final List<Integer> columnsWithMaxConflicts = new ArrayList<>();
 
         for(int i = 0; i < queens.length; i++) {
-            final int currentConflicts = getConflicts(queens, queens[i], i);
+            final int currentConflicts = getConflicts(queens[i], i, queensInRow, queensInDiagonal1, queensInDiagonal2);
             if(currentConflicts > maxConflicts) {
                 maxConflicts = currentConflicts;
                 columnsWithMaxConflicts.add(i);
@@ -128,12 +149,13 @@ public class MinConflictsAlgorithm {
         return columnsWithMaxConflicts.size() == 0 ? 0 : columnsWithMaxConflicts.get(0);
     }
 
-    private static int getRowWithMaxConflicts(final int[] queens) {
+    private static int getRowWithMaxConflicts(final int[] queens, final int[] queensInRow,
+                                              final int[] queensInDiagonal1, final int[] queensInDiagonal2) {
         int maxConflicts = 0;
         final List<Integer> rowsWithMaxConflicts = new ArrayList<>();
 
         for(int i = 0; i < queens.length; i++) {
-            final int currentConflicts = getConflicts(queens, queens[i], i);
+            final int currentConflicts = getConflicts(queens[i], i, queensInRow, queensInDiagonal1, queensInDiagonal2);
             if(currentConflicts > maxConflicts) {
                 maxConflicts = currentConflicts;
                 rowsWithMaxConflicts.add(i);
@@ -147,9 +169,10 @@ public class MinConflictsAlgorithm {
         return rowsWithMaxConflicts.size() == 0 ? 0 : rowsWithMaxConflicts.get(0);
     }
 
-    private static boolean hasConflicts(final int[] queens) {
+    private static boolean hasConflicts(final int[] queens, final int[] queensInRow,
+                                        final int[] queensInDiagonal1, final int[] queensInDiagonal2) {
         for(int i = 0; i < queens.length; i++) {
-            if(getConflicts(queens, queens[i], i) > 0) {
+            if(getConflicts(queens[i], i, queensInRow, queensInDiagonal1, queensInDiagonal2) > 0) {
                 return true;
             }
         }
