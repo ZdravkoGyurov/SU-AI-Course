@@ -7,6 +7,10 @@ import java.util.List;
 
 public class MinConflictsAlgorithm {
 
+    // queensInRow[1]
+    // queensInDiagonal1[3]
+    // queensInDiagonal2[2]
+
     private MinConflictsAlgorithm() {
         // Utility class
     }
@@ -18,6 +22,9 @@ public class MinConflictsAlgorithm {
         while(!foundAnswer) {
             queens = randomInit(size);
             final int maxIterations = size * 3;
+            final int[] queensInRow = getQueensInRow(queens);
+            final int[] queensInDiagonal1 = getQueensInDiagonal1(queens);
+            final int[] queensInDiagonal2 = getQueensInDiagonal2(queens);
             int row, column;
 
             for(int i = 0; i < maxIterations; i++) {
@@ -34,6 +41,36 @@ public class MinConflictsAlgorithm {
         }
 
         printBoard(queens);
+    }
+
+    private static int[] getQueensInDiagonal2(final int[] queens) {
+        final int[] queensInDiagonal2 = new int[queens.length * 2 - 1];
+
+        for(int i = 0; i < queens.length; i++) {
+            queensInDiagonal2[i + queens[i]]++;
+        }
+
+        return queensInDiagonal2;
+    }
+
+    private static int[] getQueensInDiagonal1(final int[] queens) {
+        final int[] queensInDiagonal1 = new int[queens.length * 2 - 1];
+
+        for(int i = 0; i < queens.length; i++) {
+            queensInDiagonal1[i - queens[i] + queens.length - 1]++;
+        }
+
+        return queensInDiagonal1;
+    }
+
+    private static int[] getQueensInRow(final int[] queens) {
+        final int[] queensInRow = new int[queens.length];
+
+        for(int i = 0; i < queens.length; i++) {
+            queensInRow[queens[i]]++;
+        }
+
+        return queensInRow;
     }
 
     private static void printBoard(final int[] queens) {
