@@ -11,7 +11,7 @@ class MinConflictsAlgorithm {
     }
 
     static void run(final int size) {
-        int[] queens = new int[size];
+        final int[] queens = new int[size];
         boolean foundAnswer = false;
         final int maxIterations = size * 3;
 
@@ -126,7 +126,7 @@ class MinConflictsAlgorithm {
             if(currentConflicts > maxConflicts) {
                 maxConflicts = currentConflicts;
                 columnWithMaxConflicts = i;
-            } else if(currentConflicts == maxConflicts && RANDOM.nextInt(2) == 0) {
+            } else if(currentConflicts == maxConflicts && RANDOM.nextInt() % 16 == 3) {
                 columnWithMaxConflicts = i;
             }
         }
@@ -139,6 +139,7 @@ class MinConflictsAlgorithm {
         int rowWithMinConflicts = queens[column];
 
         for(int i = 0; i < queens.length; i++) {
+            // put the queen no row queens[i] and again recalculate the number of queens on row/diag1/diag2
             if(queens[column] == i) {
                 continue;
             }
@@ -148,7 +149,7 @@ class MinConflictsAlgorithm {
             if(currentConflicts < minConflicts) {
                 minConflicts = currentConflicts;
                 rowWithMinConflicts = i;
-            } else if(currentConflicts == minConflicts && RANDOM.nextInt(2) == 0) {
+            } else if(currentConflicts == minConflicts && RANDOM.nextInt() % 16 == 3) {
                 rowWithMinConflicts = i;
             }
         }
