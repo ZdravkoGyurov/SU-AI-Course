@@ -31,9 +31,10 @@ public class MinConflictsAlgorithm {
                 final int newRow = row;
                 final int newCol = column;
                 queens[column] = row;
-                queensInRow = updateQueensInRow(queensInRow, oldRow, newRow);
-                queensInDiagonal1 = updateQueensInDiagonal1(queensInDiagonal1, queens.length, oldRow, oldCol, newRow, newCol);
-                queensInDiagonal2 = updateQueensInDiagonal2(queensInDiagonal2, oldRow, oldCol, newRow, newCol);
+
+                updateQueensInRow(queensInRow, oldRow, newRow);
+                updateQueensInDiagonal1(queensInDiagonal1, queens.length, oldRow, oldCol, newRow, newCol);
+                updateQueensInDiagonal2(queensInDiagonal2, oldRow, oldCol, newRow, newCol);
 
                 if(!hasConflicts(queens, queensInRow, queensInDiagonal1, queensInDiagonal2)) {
                     foundAnswer = true;
@@ -47,25 +48,19 @@ public class MinConflictsAlgorithm {
         }
     }
 
-    private static int[] updateQueensInDiagonal2(final int[] queensInDiagonal2, final int oldRow, final int oldCol, final int newRow, final int newCol) {
+    private static void updateQueensInDiagonal2(final int[] queensInDiagonal2, final int oldRow, final int oldCol, final int newRow, final int newCol) {
         queensInDiagonal2[oldRow + oldCol]--;
         queensInDiagonal2[newRow + newCol]++;
-
-        return queensInDiagonal2;
     }
 
-    private static int[] updateQueensInDiagonal1(final int[] queensInDiagonal1, final int size, final int oldRow, final int oldCol, final int newRow, final int newCol) {
+    private static void updateQueensInDiagonal1(final int[] queensInDiagonal1, final int size, final int oldRow, final int oldCol, final int newRow, final int newCol) {
         queensInDiagonal1[oldCol - oldRow + size - 1]--;
         queensInDiagonal1[newCol - newRow + size - 1]++;
-
-        return queensInDiagonal1;
     }
 
-    private static int[] updateQueensInRow(final int[] queensInRow, final int oldRow, final int newRow) {
+    private static void updateQueensInRow(final int[] queensInRow, final int oldRow, final int newRow) {
         queensInRow[oldRow]--;
         queensInRow[newRow]++;
-
-        return queensInRow;
     }
 
     private static int[] getQueensInDiagonal2(final int[] queens) {
