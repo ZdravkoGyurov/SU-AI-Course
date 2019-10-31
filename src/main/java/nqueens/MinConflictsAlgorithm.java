@@ -4,6 +4,8 @@ import java.util.*;
 
 public class MinConflictsAlgorithm {
 
+    private static final Random random = new Random();
+
     private MinConflictsAlgorithm() {
         // Utility class
     }
@@ -132,7 +134,7 @@ public class MinConflictsAlgorithm {
             if(currentConflicts > maxConflicts) {
                 maxConflicts = currentConflicts;
                 columnWithMaxConflicts = i;
-            } else if(currentConflicts == maxConflicts && new Random().nextInt(10) % 2 == 0) {
+            } else if(currentConflicts == maxConflicts && random.nextInt(2) == 0) {
                 columnWithMaxConflicts = i;
             }
         }
@@ -155,7 +157,7 @@ public class MinConflictsAlgorithm {
             if(currentConflicts < minConflicts) {
                 minConflicts = currentConflicts;
                 rowsWithMinConflicts = i;
-            } else if(currentConflicts == minConflicts && new Random().nextInt(10) % 2 == 0) {
+            } else if(currentConflicts == minConflicts && random.nextInt(2) == 0) {
                 rowsWithMinConflicts = i;
             }
         }
@@ -178,8 +180,6 @@ public class MinConflictsAlgorithm {
         for(int i = 0; i < size; i++) {
             queens[i] = i;
         }
-
-        final Random random = new Random();
 
         for (int i = 0; i < size; i++) {
             final int j = random.nextInt(size);
