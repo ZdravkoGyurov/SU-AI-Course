@@ -53,16 +53,42 @@ public final class MinConflictsAlgorithm {
 //        printBoard(queens);
     }
 
+    /**
+     * Method for updating the queens in each secondary diagonal after a queen is moved
+     *
+     * @param queensInDiagonal2 array containing number of queens in secondary diagonals
+     * @param oldRow row of the queen before the move
+     * @param oldCol column of the queen before the move
+     * @param newRow row of the queen after the move
+     * @param newCol column of the queen after the move
+     */
     private static void updateQueensInDiagonal2(final int[] queensInDiagonal2, final int oldRow, final int oldCol, final int newRow, final int newCol) {
         queensInDiagonal2[oldRow + oldCol]--;
         queensInDiagonal2[newRow + newCol]++;
     }
 
+    /**
+     * Method for updating the queens in each main diagonal after a queen is moved
+     *
+     * @param queensInDiagonal1 array containing number of queens in main diagonals
+     * @param size size of the board
+     * @param oldRow row of the queen before the move
+     * @param oldCol column of the queen before the move
+     * @param newRow row of the queen after the move
+     * @param newCol column of the queen after the move
+     */
     private static void updateQueensInDiagonal1(final int[] queensInDiagonal1, final int size, final int oldRow, final int oldCol, final int newRow, final int newCol) {
         queensInDiagonal1[oldCol - oldRow + size - 1]--;
         queensInDiagonal1[newCol - newRow + size - 1]++;
     }
 
+    /**
+     * Method for updating the number of queens in each row after a queen is moved
+     *
+     * @param queensInRow array containing number of queens in each row
+     * @param oldRow row of the queen before the move
+     * @param newRow row of the queen after the move
+     */
     private static void updateQueensInRow(final int[] queensInRow, final int oldRow, final int newRow) {
         queensInRow[oldRow]--;
         queensInRow[newRow]++;
