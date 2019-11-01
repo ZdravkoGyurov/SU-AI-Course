@@ -2,7 +2,10 @@ package nqueens;
 
 import java.util.Scanner;
 
-public class Main {
+/**
+ * Entry point class. Starts the Min Conflicts algorithm and tracks how much time it took to complete.
+ */
+public final class Main {
 
     public static void main(String[] args) {
         final Scanner sc = new Scanner(System.in);

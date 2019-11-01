@@ -1,19 +1,25 @@
 package nqueens;
 
-import java.util.*;
+import java.util.Random;
 
-class MinConflictsAlgorithm {
+/**
+ * Utility class for running Min Conflicts algorithm including some helper methods.
+ */
+public final class MinConflictsAlgorithm {
 
     private static final Random RANDOM = new Random();
 
+    /**
+     * Private default constructor to prevent instantiating the class
+     */
     private MinConflictsAlgorithm() {
         // Utility class
     }
 
-    static void run(final int size) {
+    public static void run(final int size) {
         final int[] queens = new int[size];
         boolean foundAnswer = false;
-        final int maxIterations = size * 3;
+        final int maxIterations = size;
 
         while(!foundAnswer) {
             randomInit(queens, size);
@@ -62,6 +68,12 @@ class MinConflictsAlgorithm {
         queensInRow[newRow]++;
     }
 
+    /**
+     * Method for generating an array containing number of queens in secondary diagonals
+     *
+     * @param queens array with all queens' rows
+     * @return array containing number of queens in secondary diagonals
+     */
     private static int[] getQueensInDiagonal2(final int[] queens) {
         final int[] queensInDiagonal2 = new int[queens.length * 2 - 1];
 
@@ -72,6 +84,12 @@ class MinConflictsAlgorithm {
         return queensInDiagonal2;
     }
 
+    /**
+     * Method for generating an array containing number of queens in main diagonals
+     *
+     * @param queens array with all queens' rows
+     * @return array containing number of queens in main diagonals
+     */
     private static int[] getQueensInDiagonal1(final int[] queens) {
         final int[] queensInDiagonal1 = new int[queens.length * 2 - 1];
 
@@ -82,6 +100,12 @@ class MinConflictsAlgorithm {
         return queensInDiagonal1;
     }
 
+    /**
+     * Method for generating an array containing number of queens in each row
+     *
+     * @param queens array with all queens' rows
+     * @return array containing number of queens in each row
+     */
     private static int[] getQueensInRow(final int[] queens) {
         final int[] queensInRow = new int[queens.length];
 
@@ -92,6 +116,11 @@ class MinConflictsAlgorithm {
         return queensInRow;
     }
 
+    /**
+     * Method for printing a 2d chess board to the standard output where '*' marks a queen and '_' marks a blank space.
+     *
+     * @param queens array with all queens' rows
+     */
     private static void printBoard(final int[] queens) {
         final char[][] board = new char[queens.length][queens.length];
 
@@ -113,10 +142,29 @@ class MinConflictsAlgorithm {
         }
     }
 
+    /**
+     * Method for determining how many conflicts a queen has. This method can also be used for blank spaces but 3 conflicts must be added to the final result.
+     *
+     * @param row row of the queen
+     * @param col column of the queen
+     * @param queensInRow array containing number of queens in each row
+     * @param queensInDiagonal1 array containing number of queens in main diagonals
+     * @param queensInDiagonal2 array containing number of queens in secondary diagonals
+     * @return number of conflicts the queen has
+     */
     private static int getConflicts(final int row, final int col, final int[] queensInRow, final int[] queensInDiagonal1, final int[] queensInDiagonal2) {
         return queensInRow[row] + queensInDiagonal1[col - row + queensInRow.length - 1] + queensInDiagonal2[row + col] - 3;
     }
 
+    /**
+     * Method for finding the column of the queen with most conflicts
+     *
+     * @param queens array with all queens' rows
+     * @param queensInRow array containing number of queens in each row
+     * @param queensInDiagonal1 array containing number of queens in main diagonals
+     * @param queensInDiagonal2 array containing number of queens in secondary diagonals
+     * @return column with most conflicts
+     */
     private static int getColumnWithMaxConflicts(final int[] queens, final int[] queensInRow, final int[] queensInDiagonal1, final int[] queensInDiagonal2) {
         int maxConflicts = 0;
         int columnWithMaxConflicts = 0;
@@ -134,12 +182,21 @@ class MinConflictsAlgorithm {
         return columnWithMaxConflicts;
     }
 
+    /**
+     * Method for determining which row in a given column would make least conflicts if the queen in this column is moved there.
+     *
+     * @param column selected column in which the method determines the best row
+     * @param queens array with all queens' rows
+     * @param queensInRow array containing number of queens in each row
+     * @param queensInDiagonal1 array containing number of queens in main diagonals
+     * @param queensInDiagonal2 array containing number of queens in secondary diagonals
+     * @return row with least conflicts
+     */
     private static int getRowWithMinConflicts(final int column, final int[] queens, final int[] queensInRow, final int[] queensInDiagonal1, final int[] queensInDiagonal2) {
         int minConflicts = getConflicts(queens[column], column, queensInRow, queensInDiagonal1, queensInDiagonal2);
         int rowWithMinConflicts = queens[column];
 
         for(int i = 0; i < queens.length; i++) {
-            // put the queen no row queens[i] and again recalculate the number of queens on row/diag1/diag2
             if(queens[column] == i) {
                 continue;
             }
@@ -157,6 +214,15 @@ class MinConflictsAlgorithm {
         return rowWithMinConflicts;
     }
 
+    /**
+     * Method for checking if there are any conflicts on the board. Used to determine if goal is reached.
+     *
+     * @param queens array with all queens' rows
+     * @param queensInRow array containing number of queens in each row
+     * @param queensInDiagonal1 array containing number of queens in main diagonals
+     * @param queensInDiagonal2 array containing number of queens in secondary diagonals
+     * @return true if any conflict is found
+     */
     private static boolean hasConflicts(final int[] queens, final int[] queensInRow, final int[] queensInDiagonal1, final int[] queensInDiagonal2) {
         for(int i = 0; i < queens.length; i++) {
             if(getConflicts(queens[i], i, queensInRow, queensInDiagonal1, queensInDiagonal2) > 0) {
@@ -167,6 +233,12 @@ class MinConflictsAlgorithm {
         return false;
     }
 
+    /**
+     * Method for randomly initializing the queens array with scrambled rows [0, ..., size] to start with minimum conflicts
+     *
+     * @param queens the array before being scrambled
+     * @param size size of the board
+     */
     private static void randomInit(final int[] queens, final int size) {
         for(int i = 0; i < size; i++) {
             queens[i] = i;
