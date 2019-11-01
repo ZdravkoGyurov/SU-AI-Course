@@ -16,6 +16,11 @@ public final class MinConflictsAlgorithm {
         // Utility class
     }
 
+    /**
+     * Method for running the Min Conflicts algorithm
+     *
+     * @param size size of the board
+     */
     public static void run(final int size) {
         final int[] queens = new int[size];
         boolean foundAnswer = false;
