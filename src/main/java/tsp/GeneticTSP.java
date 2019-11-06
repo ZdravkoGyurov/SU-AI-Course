@@ -26,25 +26,89 @@ public final class GeneticTSP {
             final City[][] childPopulation = new City[POPULATION_SIZE][cities];
             int childrenInChildPopulation = 0;
 
-            // add elite ?????
+            // add elite ??? should we?
             final RouteRank[] parentPopulationRanks = generatePopulationRanks(parentPopulation);
             for(int i = 0; i < ELITE_POPULATION_SIZE; i++) {
-                // childPopulation[childrenInChildPopulation++] = parentPopulationRanks;
+                final int indexOfCurrentElite = parentPopulationRanks[i].getIndex();
+                final City[] currentEliteRoute = parentPopulation[indexOfCurrentElite];
+                 childPopulation[childrenInChildPopulation++] = currentEliteRoute;
             }
 
             while(childrenInChildPopulation < POPULATION_SIZE) {
                 final City[] parent1 = tournamentSelection(parentPopulation);
                 final City[] parent2 = tournamentSelection(parentPopulation);
-//                crossover(parent1, parent2, child1, child2);
-//                mutate(child1);
-//                mutate(child2);
-//                evaluate child1, child2 for fitness ??? why
-//                childPopulation[childrenInChildPopulation++] = child1;
-//                childPopulation[childrenInChildPopulation++] = child2;
+
+                final City[] child1 = copyParent(parent1);
+                final City[] child2 = copyParent(parent2);
+
+                crossover(parent1, parent2, child1, child2);
+
+                swapMutate(child1, cities);
+                swapMutate(child2, cities);
+
+//                evaluate child1, child2 for fitness ??? why?
+
+                childPopulation[childrenInChildPopulation++] = child1;
+                childPopulation[childrenInChildPopulation++] = child2;
             }
 //            parentPopulation = combine parentPopulation and childPopulation somehow to get POPULATION_SIZE new individuals
         }
 
+    }
+
+    private static City[] copyParent(final City[] parent) {
+        final City[] child = new City[parent.length];
+
+        int iter = 0;
+        for(final City c : parent) {
+            child[iter++] = new City(c.getX(), c.getY());
+        }
+
+        return child;
+    }
+
+    private static void crossover(final City[] parent1, final City[] parent2, final City[] child1, final City[] child2) {
+        final int swapPoint = RANDOM.nextInt(child1.length);
+
+        crossoverChild(swapPoint, parent1, parent2, child1);
+        crossoverChild(swapPoint, parent1, parent2, child2);
+    }
+
+    private static void crossoverChild(final int swapPoint, final City[] parent1, final City[] parent2, final City[] child) {
+        int iter2 = swapPoint + 1;
+
+        for(int i = swapPoint + 1; i < child.length; i++) {
+            if(isCityInRoute(parent2[iter2], parent1, 0, i)) {
+                child[i] = parent2[iter2];
+            }
+
+            iter2++;
+            if(iter2 == child.length) {
+                iter2 = 0;
+            }
+        }
+    }
+
+    private static boolean isCityInRoute(final City city, final City[] route, final int from, final int to) {
+        for(int i = from; i < to; i++) {
+            if(route[i].equals(city)) return true;
+        }
+        return false;
+    }
+
+    private static void swapMutate(final City[] route, final int cities) {
+        final int r = RANDOM.nextInt(10);
+
+        if(r < 2) {
+            final int randomIndex1 = RANDOM.nextInt(cities);
+            int randomIndex2 = RANDOM.nextInt(cities);
+
+            while(randomIndex1 == randomIndex2) randomIndex2 = RANDOM.nextInt(cities);
+
+            final City tempCity = route[randomIndex1];
+            route[randomIndex1] = route[randomIndex2];
+            route[randomIndex2] = tempCity;
+        }
     }
 
     private static City[] tournamentSelection(final City[][] population) {
