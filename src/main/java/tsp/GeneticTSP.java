@@ -7,11 +7,12 @@ import java.util.Random;
 public final class GeneticTSP {
 
     private static final Random RANDOM = new Random();
-    private static int MIN_COORDINATE = -10;
-    private static int MAX_COORDINATE = 10;
+    private static int MIN_COORDINATE = -20;
+    private static int MAX_COORDINATE = 20;
     private static int POPULATION_SIZE = 50;
-    private static int ELITE_POPULATION_SIZE = 5;
+    private static int ELITE_POPULATION_SIZE = 6;
     private static int BINARY_TOURNAMENT_SELECTION = 2;
+    private static final int GENERATIONS = 100;
 
     private GeneticTSP() {
         // Utility class
@@ -20,9 +21,9 @@ public final class GeneticTSP {
     public static void run(final int cities) {
         final City[] cityList = generateCityList(cities);
 
-        final City[][] parentPopulation = generateInitialPopulation(cityList, POPULATION_SIZE);
+        City[][] parentPopulation = generateInitialPopulation(cityList, POPULATION_SIZE);
 
-        while(true) {
+        for(int j = 0; j < GENERATIONS; j++) {
             final City[][] childPopulation = new City[POPULATION_SIZE][cities];
             int childrenInChildPopulation = 0;
 
@@ -51,7 +52,19 @@ public final class GeneticTSP {
                 childPopulation[childrenInChildPopulation++] = child1;
                 childPopulation[childrenInChildPopulation++] = child2;
             }
+
 //            parentPopulation = combine parentPopulation and childPopulation somehow to get POPULATION_SIZE new individuals
+            parentPopulation = childPopulation;
+
+            final RouteRank[] ranks = generatePopulationRanks(parentPopulation);
+            for(final City c : parentPopulation[ranks[0].getIndex()]) {
+                System.out.print("(" + c.getX() + ", " + c.getY() + ") ");
+            }
+            System.out.println(calcDistance(parentPopulation[ranks[0].getIndex()]));
+            for(int i = 0; i < 5; i++) {
+                System.out.println(ranks[i].getIndex() + ", " + ranks[i].getFitness());
+            }
+            System.out.println("--------------------------------------------------");
         }
 
     }
@@ -159,23 +172,23 @@ public final class GeneticTSP {
         return popRanks;
     }
 
-//    private static void sortPopulationByFitness(final City[][] population) {
-//        Arrays.sort(population, new Comparator<City[]>() {
-//            @Override
-//            public int compare(final City[] route1, final City[] route2) {
-//                final double route1Fitness = calcFitness(route1);
-//                final double route2Fitness = calcFitness(route2);
-//
-//                if(route1Fitness > route2Fitness) {
-//                    return -1;
-//                } else if(route1Fitness == route2Fitness) {
-//                    return 0;
-//                } else {
-//                    return 1;
-//                }
-//            }
-//        });
-//    }
+    private static void sortPopulationByFitness(final City[][] population) {
+        Arrays.sort(population, new Comparator<City[]>() {
+            @Override
+            public int compare(final City[] route1, final City[] route2) {
+                final double route1Fitness = calcFitness(route1);
+                final double route2Fitness = calcFitness(route2);
+
+                if(route1Fitness > route2Fitness) {
+                    return -1;
+                } else if(route1Fitness == route2Fitness) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            }
+        });
+    }
 
     private static City[][] generateInitialPopulation(final City[] cityList, final int populationSize) {
         final City[][] population = new City[populationSize][cityList.length];
