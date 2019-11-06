@@ -1,8 +1,6 @@
 package tsp;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Random;
+import java.util.*;
 
 public final class GeneticTSP {
 
@@ -22,17 +20,17 @@ public final class GeneticTSP {
         final City[] cityList = generateCityList(cities);
 
         City[][] parentPopulation = generateInitialPopulation(cityList, POPULATION_SIZE);
+        int generation = 0;
 
         for(int j = 0; j < GENERATIONS; j++) {
             final City[][] childPopulation = new City[POPULATION_SIZE][cities];
             int childrenInChildPopulation = 0;
 
-            // add elite ??? should we?
             final RouteRank[] parentPopulationRanks = generatePopulationRanks(parentPopulation);
             for(int i = 0; i < ELITE_POPULATION_SIZE; i++) {
                 final int indexOfCurrentElite = parentPopulationRanks[i].getIndex();
                 final City[] currentEliteRoute = parentPopulation[indexOfCurrentElite];
-                 childPopulation[childrenInChildPopulation++] = currentEliteRoute;
+                childPopulation[childrenInChildPopulation++] = currentEliteRoute;
             }
 
             while(childrenInChildPopulation < POPULATION_SIZE) {
@@ -47,29 +45,33 @@ public final class GeneticTSP {
                 swapMutate(child1, cities);
                 swapMutate(child2, cities);
 
-//                evaluate child1, child2 for fitness ??? why?
-
                 childPopulation[childrenInChildPopulation++] = child1;
                 childPopulation[childrenInChildPopulation++] = child2;
             }
 
-//            parentPopulation = combine parentPopulation and childPopulation somehow to get POPULATION_SIZE new individuals
             parentPopulation = childPopulation;
+            generation++;
 
-            final RouteRank[] ranks = generatePopulationRanks(parentPopulation);
-            for(final City c : parentPopulation[ranks[0].getIndex()]) {
-                System.out.print("(" + c.getX() + ", " + c.getY() + ") ");
+            if(generation == 10 || generation == 25 || generation == 50 || generation == 75 || generation == 100) {
+                System.out.println(generation);
+                final RouteRank[] ranks = generatePopulationRanks(parentPopulation);
+                for(final City c : parentPopulation[ranks[0].getIndex()]) {
+                    System.out.print("(" + c.getX() + ", " + c.getY() + ") ");
+                }
+
+                System.out.println(calcDistance(parentPopulation[ranks[0].getIndex()]));
+
+                for(int i = 0; i < POPULATION_SIZE; i++) {
+                    System.out.println(ranks[i].getIndex() + ", " + ranks[i].getFitness());
+                }
+
+                System.out.println("--------------------------------------------------");
             }
-            System.out.println(calcDistance(parentPopulation[ranks[0].getIndex()]));
-            for(int i = 0; i < 5; i++) {
-                System.out.println(ranks[i].getIndex() + ", " + ranks[i].getFitness());
-            }
-            System.out.println("--------------------------------------------------");
+
         }
 
     }
 
-    // TODO test
     private static City[] copyParent(final City[] parent) {
         final City[] child = new City[parent.length];
 
@@ -81,39 +83,35 @@ public final class GeneticTSP {
         return child;
     }
 
-    // TODO test
     private static void crossover(final City[] parent1, final City[] parent2, final City[] child1, final City[] child2) {
         final int swapPoint = RANDOM.nextInt(child1.length);
 
-        crossoverChild(swapPoint, parent1, parent2, child1);
-        crossoverChild(swapPoint, parent1, parent2, child2);
+        crossoverChild(swapPoint, parent2, child1);
+        crossoverChild(swapPoint, parent1, child2);
     }
 
-    // TODO test
-    private static void crossoverChild(final int swapPoint, final City[] parent1, final City[] parent2, final City[] child) {
+    private static void crossoverChild(final int swapPoint, final City[] parent2, final City[] child1) {
         int iter2 = swapPoint + 1;
 
-        for(int i = swapPoint + 1; i < child.length; i++) {
-            if(isCityInRoute(parent2[iter2], parent1, 0, i)) {
-                child[i] = parent2[iter2];
+        for(int i = swapPoint + 1; i < child1.length; i++) {
+            while(isCityInRoute(parent2[iter2], child1, 0, i - 1)) {
+                iter2++;
+                if(iter2 == child1.length) {
+                    iter2 = 0;
+                }
             }
 
-            iter2++;
-            if(iter2 == child.length) {
-                iter2 = 0;
-            }
+            child1[i] = parent2[iter2];
         }
     }
 
-    // TODO test
     private static boolean isCityInRoute(final City city, final City[] route, final int from, final int to) {
-        for(int i = from; i < to; i++) {
+        for(int i = from; i <= to; i++) {
             if(route[i].equals(city)) return true;
         }
         return false;
     }
 
-    // TODO test
     private static void swapMutate(final City[] route, final int cities) {
         final boolean chance20Percent = RANDOM.nextInt(10) < 2;
 
@@ -129,7 +127,6 @@ public final class GeneticTSP {
         }
     }
 
-    // TODO test
     private static City[] tournamentSelection(final City[][] population) {
         City[] bestRoute = null;
 
@@ -224,10 +221,21 @@ public final class GeneticTSP {
     }
 
     private static City[] generateCityList(final int numCities) {
+        final Set<City> uniqueCities = new LinkedHashSet<>();
+
+        for(int i = 0; i < numCities; i++) {
+            City currentCity  = new City(generateRandomCoordinate(), generateRandomCoordinate());
+            while(uniqueCities.contains(currentCity)) {
+                currentCity = new City(generateRandomCoordinate(), generateRandomCoordinate());
+            }
+            uniqueCities.add(currentCity);
+        }
+
         final City[] cityList = new City[numCities];
 
-        for(int i = 0; i < cityList.length; i++) {
-            cityList[i] = new City(generateRandomCoordinate(), generateRandomCoordinate());
+        int iter = 0;
+        for(final City city : uniqueCities) {
+            cityList[iter++] = city;
         }
 
         return cityList;
