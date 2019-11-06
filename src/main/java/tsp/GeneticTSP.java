@@ -69,6 +69,7 @@ public final class GeneticTSP {
 
     }
 
+    // TODO test
     private static City[] copyParent(final City[] parent) {
         final City[] child = new City[parent.length];
 
@@ -80,6 +81,7 @@ public final class GeneticTSP {
         return child;
     }
 
+    // TODO test
     private static void crossover(final City[] parent1, final City[] parent2, final City[] child1, final City[] child2) {
         final int swapPoint = RANDOM.nextInt(child1.length);
 
@@ -87,6 +89,7 @@ public final class GeneticTSP {
         crossoverChild(swapPoint, parent1, parent2, child2);
     }
 
+    // TODO test
     private static void crossoverChild(final int swapPoint, final City[] parent1, final City[] parent2, final City[] child) {
         int iter2 = swapPoint + 1;
 
@@ -102,6 +105,7 @@ public final class GeneticTSP {
         }
     }
 
+    // TODO test
     private static boolean isCityInRoute(final City city, final City[] route, final int from, final int to) {
         for(int i = from; i < to; i++) {
             if(route[i].equals(city)) return true;
@@ -109,10 +113,11 @@ public final class GeneticTSP {
         return false;
     }
 
+    // TODO test
     private static void swapMutate(final City[] route, final int cities) {
-        final int r = RANDOM.nextInt(10);
+        final boolean chance20Percent = RANDOM.nextInt(10) < 2;
 
-        if(r < 2) {
+        if(chance20Percent) {
             final int randomIndex1 = RANDOM.nextInt(cities);
             int randomIndex2 = RANDOM.nextInt(cities);
 
@@ -124,6 +129,7 @@ public final class GeneticTSP {
         }
     }
 
+    // TODO test
     private static City[] tournamentSelection(final City[][] population) {
         City[] bestRoute = null;
 
@@ -172,23 +178,23 @@ public final class GeneticTSP {
         return popRanks;
     }
 
-    private static void sortPopulationByFitness(final City[][] population) {
-        Arrays.sort(population, new Comparator<City[]>() {
-            @Override
-            public int compare(final City[] route1, final City[] route2) {
-                final double route1Fitness = calcFitness(route1);
-                final double route2Fitness = calcFitness(route2);
-
-                if(route1Fitness > route2Fitness) {
-                    return -1;
-                } else if(route1Fitness == route2Fitness) {
-                    return 0;
-                } else {
-                    return 1;
-                }
-            }
-        });
-    }
+//    private static void sortPopulationByFitness(final City[][] population) {
+//        Arrays.sort(population, new Comparator<City[]>() {
+//            @Override
+//            public int compare(final City[] route1, final City[] route2) {
+//                final double route1Fitness = calcFitness(route1);
+//                final double route2Fitness = calcFitness(route2);
+//
+//                if(route1Fitness > route2Fitness) {
+//                    return -1;
+//                } else if(route1Fitness == route2Fitness) {
+//                    return 0;
+//                } else {
+//                    return 1;
+//                }
+//            }
+//        });
+//    }
 
     private static City[][] generateInitialPopulation(final City[] cityList, final int populationSize) {
         final City[][] population = new City[populationSize][cityList.length];
