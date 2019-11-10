@@ -7,10 +7,10 @@ public final class GeneticTSP {
     private static final Random RANDOM = new Random();
     private static int MIN_COORDINATE = -20;
     private static int MAX_COORDINATE = 20;
-    private static int POPULATION_SIZE = 50;
-    private static int ELITE_POPULATION_SIZE = 6;
+    private static int POPULATION_SIZE = 100;
+    private static int ELITE_POPULATION_SIZE = 10;
     private static int BINARY_TOURNAMENT_SELECTION = 2;
-    private static final int GENERATIONS = 100;
+    private static final int GENERATIONS = 1000;
 
     private GeneticTSP() {
         // Utility class
@@ -52,7 +52,7 @@ public final class GeneticTSP {
             parentPopulation = childPopulation;
             generation++;
 
-            if(generation == 10 || generation == 25 || generation == 50 || generation == 75 || generation == 100) {
+            if(generation == 10 || generation == 100 || generation == 500 || generation == 750 || generation == 1000) {
                 System.out.println(generation);
                 final RouteRank[] ranks = generatePopulationRanks(parentPopulation);
                 for(final City c : parentPopulation[ranks[0].getIndex()]) {
@@ -61,9 +61,9 @@ public final class GeneticTSP {
 
                 System.out.println(calcDistance(parentPopulation[ranks[0].getIndex()]));
 
-                for(int i = 0; i < POPULATION_SIZE; i++) {
-                    System.out.println(ranks[i].getIndex() + ", " + ranks[i].getFitness());
-                }
+//                for(int i = 0; i < POPULATION_SIZE; i++) {
+//                    System.out.println(ranks[i].getIndex() + ", " + ranks[i].getFitness());
+//                }
 
                 System.out.println("--------------------------------------------------");
             }
