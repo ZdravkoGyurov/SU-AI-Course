@@ -15,6 +15,7 @@ public final class Minimax {
     private static final int MAX_WIN = 1;
     private static final int MIN_WIN = -1;
     private static final int DRAW = 0;
+    private static final int DEFAULT_DEPTH = 20;
 
     private Minimax() {
         // Utility class
@@ -50,7 +51,7 @@ public final class Minimax {
                 board.print();
             } else {
                 final Player algorithmPlayer = algorithmMark == Mark.CROSS ? Player.MAX : Player.MIN;
-                board = minimax(board, 20, Integer.MIN_VALUE, Integer.MAX_VALUE, algorithmPlayer).getState();
+                board = minimax(board, DEFAULT_DEPTH, Integer.MIN_VALUE, Integer.MAX_VALUE, algorithmPlayer).getState();
                 board.print();
             }
             playerOnTurn = !playerOnTurn;
@@ -141,6 +142,7 @@ public final class Minimax {
 
         if (player == Player.MAX) {
             final EvaluatedBoard maxEval = new EvaluatedBoard(null, Integer.MIN_VALUE);
+
             for (final Board child : children(position, player)) {
                 final EvaluatedBoard evalBoard = minimax(child, depth - 1, alpha, beta, Player.MIN);
 
@@ -154,9 +156,11 @@ public final class Minimax {
                     break;
                 }
             }
+
             return maxEval;
         } else {
             final EvaluatedBoard minEval = new EvaluatedBoard(null, Integer.MAX_VALUE);
+
             for (final Board child : children(position, player)) {
                 final EvaluatedBoard evalBoard = minimax(child, depth - 1, alpha, beta, Player.MAX);
                 if (evalBoard.getEvaluation() < minEval.getEvaluation()) {
@@ -169,6 +173,7 @@ public final class Minimax {
                     break;
                 }
             }
+
             return minEval;
         }
     }
