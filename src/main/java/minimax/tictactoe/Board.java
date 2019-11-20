@@ -1,31 +1,31 @@
 package minimax.tictactoe;
 
-import minimax.enums.Mark;
-
 import java.util.Arrays;
 import java.util.Objects;
 
+import minimax.enums.Mark;
+
 public class Board {
 
-    private final char[][] board;
+    private final char[][] state;
     private int availableSpaces;
 
     public Board() {
-        board = new char[3][3];
+        state = new char[3][3];
         availableSpaces = 9;
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board.length; j++) {
-                board[i][j] = Mark.BLANK.getValue();
+        for (int i = 0; i < state.length; i++) {
+            for (int j = 0; j < state.length; j++) {
+                state[i][j] = Mark.BLANK.getValue();
             }
         }
     }
 
     public Board(final char[][] board) {
-        this.board = board;
+        state = board;
         availableSpaces = 0;
-        for(int i = 0; i < board.length; i++) {
-            for(int j = 0; j < board.length; j++) {
-                if(board[i][j] == Mark.BLANK.getValue()) {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board.length; j++) {
+                if (board[i][j] == Mark.BLANK.getValue()) {
                     availableSpaces++;
                 }
             }
@@ -33,7 +33,7 @@ public class Board {
     }
 
     public char[][] getBoard() {
-        return board;
+        return state;
     }
 
     public int getAvailableSpaces() {
@@ -41,22 +41,22 @@ public class Board {
     }
 
     public boolean isGameOver() {
-        for(int i = 0; i < board.length; i++) {
-            if(board[i][0] != Mark.BLANK.getValue() && board[i][0] == board[i][1] && board[i][1] == board[i][2]) {
+        for (int i = 0; i < state.length; i++) {
+            if (state[i][0] != Mark.BLANK.getValue() && state[i][0] == state[i][1] && state[i][1] == state[i][2]) {
                 return true;
             }
 
-            if(board[0][i] != Mark.BLANK.getValue() && board[0][i] == board[1][i] && board[1][i] == board[2][i]) {
+            if (state[0][i] != Mark.BLANK.getValue() && state[0][i] == state[1][i] && state[1][i] == state[2][i]) {
                 return true;
             }
 
         }
 
-        if(board[0][0] != Mark.BLANK.getValue() && board[0][0] == board[1][1] && board[1][1] == board[2][2]) {
+        if (state[0][0] != Mark.BLANK.getValue() && state[0][0] == state[1][1] && state[1][1] == state[2][2]) {
             return true;
         }
 
-        if(board[0][2] != Mark.BLANK.getValue() && board[0][2] == board[1][1] && board[1][1] == board[2][0]) {
+        if (state[0][2] != Mark.BLANK.getValue() && state[0][2] == state[1][1] && state[1][1] == state[2][0]) {
             return true;
         }
 
@@ -67,16 +67,16 @@ public class Board {
         final int fixedX = x - 1;
         final int fixedY = y - 1;
 
-        if (board[fixedX][fixedY] != Mark.BLANK.getValue()) {
+        if (state[fixedX][fixedY] != Mark.BLANK.getValue()) {
             throw new IllegalArgumentException("This place is already taken!");
         }
 
-        board[fixedX][fixedY] = mark.getValue();
+        state[fixedX][fixedY] = mark.getValue();
         availableSpaces--;
     }
 
-    public void printBoard() {
-        for (final char[] row : board) {
+    public void print() {
+        for (final char[] row : state) {
             for (final char cell : row) {
                 System.out.print(cell + " ");
             }
@@ -86,14 +86,18 @@ public class Board {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Board board1 = (Board) o;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Board board1 = (Board) o;
 
-        for(int i = 0; i < board.length; i++) {
-            for(int j = 0; j < board.length; j++) {
-                if(board[i][j] != board1.board[i][j]) {
+        for (int i = 0; i < state.length; i++) {
+            for (int j = 0; j < state.length; j++) {
+                if (state[i][j] != board1.state[i][j]) {
                     return false;
                 }
             }
@@ -105,7 +109,7 @@ public class Board {
     @Override
     public int hashCode() {
         int result = Objects.hash(availableSpaces);
-        result = 31 * result + Arrays.hashCode(board);
+        result = 31 * result + Arrays.hashCode(state);
         return result;
     }
 }
