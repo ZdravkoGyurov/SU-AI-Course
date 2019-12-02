@@ -19,13 +19,19 @@ class DrawPlot extends JFrame {
     private static final double POINT_SIZE = 5.0;
     private final Plot plot;
     private final double max;
+    private int iterations;
 
-    public DrawPlot(final Plot plot, final double max) {
+    public DrawPlot(final Plot plot, final double max, final int iterations) {
         final JPanel panel = new JPanel();
         getContentPane().add(panel);
         setSize(SIZE, SIZE);
         this.plot = plot;
         this.max = SIZE / (2.0 * max);
+        this.iterations = iterations;
+    }
+
+    public void iterate() {
+        iterations++;
     }
 
     @Override
@@ -50,6 +56,9 @@ class DrawPlot extends JFrame {
                 g2.draw(new Ellipse2D.Double(ellipseX, ellipseY, POINT_SIZE, POINT_SIZE));
             }
         }
+
+        g2.setPaint(Color.BLACK);
+        g2.drawString("Iterations: " + iterations, 10, 50);
     }
 
     private void drawCoordinateLines(final Graphics2D g2) {
@@ -80,24 +89,22 @@ class DrawPlot extends JFrame {
         final int numClusters = 5;
         final double min = -5.0;
         final double max = -min;
-        final int pointsPerCluster = 15;
+        final int pointsPerCluster = 10;
         final Plot plot = new Plot(numClusters, min, max);
 
         for (final Cluster c : plot.getClusters()) {
             c.getPoints().addAll(Point.generateRandomPoints(min, max, c.getCentroid(), pointsPerCluster));
         }
 
-        int iteration = 0;
-        final DrawPlot drawPlot = new DrawPlot(plot, max);
+        final int iteration = 0;
+        final DrawPlot drawPlot = new DrawPlot(plot, max, iteration);
         drawPlot.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         drawPlot.setVisible(true);
         plot.printClusters();
 
         while (plot.reevaluatePoints()) {
-            iteration++;
+            drawPlot.iterate();
             plot.printClusters();
         }
-
-        System.out.println(iteration);
     }
 }
