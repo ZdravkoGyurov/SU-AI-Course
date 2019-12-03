@@ -26,6 +26,8 @@ public class ClassifierValidator {
         final Set<Individual> individuals = new LinkedHashSet<>();
         setupData(individuals);
 
+        double accuracy = 0;
+
         for (int i = 0; i < crossoverFolds; i++) {
             final int partSize = individuals.size() / crossoverFolds;
             final int from = i * partSize;
@@ -44,8 +46,13 @@ public class ClassifierValidator {
                     match++;
                 }
             }
-            System.out.println("matches: " + match + "/" + partSize + " => " + (double) match / (double) partSize);
+
+            final double currentAccuracy = (double) match / (double) partSize;
+            System.out.println("matches: " + match + "/" + partSize + " => " + currentAccuracy);
+            accuracy += currentAccuracy;
         }
+
+        System.out.println("accuracy: " + accuracy / crossoverFolds);
 
     }
 
